@@ -1,4 +1,5 @@
 import numpy as np
+from collections import defaultdict
 from abstention.figure_making_utils import (
     wilcox_srs, get_ustats_mat,
     get_tied_top_and_worst_methods)
