@@ -54,7 +54,7 @@ def get_func_to_draw_label_proportions(test_labels):
 
 
 def run_calibmethods(valid_preacts, valid_labels,
-                     test_preacts, calibname_to_calibfactory,
+                     test_preacts, test_labels, calibname_to_calibfactory,
                      samplesize,
                      samplesizesseen,
                      metric_to_samplesize_to_calibname_to_unshiftedvals):
@@ -137,6 +137,7 @@ def run_experiments(num_trials, seeds, alphas_and_samplesize,
                        valid_preacts=sample_valid_preacts,
                        valid_labels=sample_valid_labels,
                        test_preacts=test_preacts,
+                       test_labels=test_labels,
                        calibname_to_calibfactory=calibname_to_calibfactory,
                        samplesize=samplesize,
                        samplesizesseen=samplesizesseen,
@@ -230,7 +231,6 @@ def run_experiments(num_trials, seeds, alphas_and_samplesize,
                    alpha][samplesize][adaptncalib_name][metric_name],
                    ddof=1))
                 sys.stdout.flush()
-    
 
     return (alpha_to_samplesize_to_adaptername_to_metric_to_vals,
             alpha_to_samplesize_to_baselineacc,
