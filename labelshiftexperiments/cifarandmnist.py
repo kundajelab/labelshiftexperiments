@@ -53,6 +53,45 @@ def get_func_to_draw_label_proportions(test_labels):
     return draw_test_indices
 
 
+def run_calibmethods(valid_preacts, valid_labels,
+                     test_preacts, calibname_to_calibfactory,
+                     samplesize,
+                     samplesizesseen,
+                     metric_to_samplesize_to_calibname_to_unshiftedvals):
+    calibname_to_calibfunc = {}
+    calibname_to_calibvalidpreds = {}
+    for calibname, calibfactory in\
+                                 calibname_to_calibfactory.items():
+        calibfunc = calibfactory(
+            valid_preacts=valid_preacts,
+            valid_labels=valid_labels)
+
+        unshifted_test_preds = calibfunc(test_preacts)
+        unshifted_test_nll = -np.mean(
+                                np.sum(np.log(unshifted_test_preds)
+                                *test_labels, axis=-1))
+        unshifted_test_ece = abstention.calibration.compute_ece(
+                              softmax_out=unshifted_test_preds,
+                              labels=test_labels, bins=15)
+        unshifted_test_jsdiv =\
+            scipy.spatial.distance.jensenshannon(                       
+               p=np.mean(unshifted_test_preds, axis=0),              
+               q=np.mean(test_labels, axis=0))
+
+        #if statement is there to avoid double-counting
+        if (samplesize not in samplesizesseen):
+            metric_to_samplesize_to_calibname_to_unshiftedvals[
+                'ece'][samplesize][calibname].append(unshifted_test_ece)
+            metric_to_samplesize_to_calibname_to_unshiftedvals[
+                'nll'][samplesize][calibname].append(unshifted_test_nll)
+            metric_to_samplesize_to_calibname_to_unshiftedvals[
+                'jsdiv'][samplesize][calibname].append(unshifted_test_jsdiv)
+        calibname_to_calibfunc[calibname] = calibfunc
+        calibname_to_calibvalidpreds[calibname] = calibfunc(valid_preacts)
+
+    return (calibname_to_calibfunc, calibname_to_calibvalidpreds)
+
+
 def run_experiments(num_trials, seeds, alphas_and_samplesize,
                     shifttype,
                     calibname_to_calibfactory,
@@ -92,48 +131,23 @@ def run_experiments(num_trials, seeds, alphas_and_samplesize,
                 sample_valid_preacts = valid_preacts[sample_valid_indices]
                 sample_valid_labels = valid_labels[sample_valid_indices]
 
-                #compute the calibrations using the preds and labels
-                calibname_to_calibfunc = {}
-                calibname_to_calibvalidpreds = {}
-                for calibname, calibfactory in\
-                                             calibname_to_calibfactory.items():
-                    calibfunc = calibfactory(
-                        valid_preacts=sample_valid_preacts,
-                        valid_labels=sample_valid_labels)
-
-                    unshifted_test_preds = calibfunc(test_preacts)
-                    unshifted_test_nll = -np.mean(
-                                            np.sum(np.log(unshifted_test_preds)
-                                            *test_labels, axis=-1))
-                    unshifted_test_ece = abstention.calibration.compute_ece(
-                                          softmax_out=unshifted_test_preds,
-                                          labels=test_labels, bins=15)
-                    unshifted_test_jsdiv =\
-                        scipy.spatial.distance.jensenshannon(                       
-                           p=np.mean(unshifted_test_preds, axis=0),              
-                           q=np.mean(test_labels, axis=0))
-
-                    #if statement is there to avoid double-counting
-                    if (samplesize not in samplesizesseen):
-                        metric_to_samplesize_to_calibname_to_unshiftedvals[
-                            'ece'][samplesize][calibname].append(
-                             unshifted_test_ece)
-                        metric_to_samplesize_to_calibname_to_unshiftedvals[
-                            'nll'][samplesize][calibname].append(
-                              unshifted_test_nll)
-                        metric_to_samplesize_to_calibname_to_unshiftedvals[
-                            'jsdiv'][samplesize][calibname].append(
-                              unshifted_test_jsdiv)
-
-                    calibname_to_calibfunc[calibname] = calibfunc
-                    calibname_to_calibvalidpreds[calibname] = (
-                      calibfunc(sample_valid_preacts))
+                (calibname_to_calibfunc,
+                 calibname_to_calibvalidpreds) = (
+                    run_calibmethods(
+                       valid_preacts=sample_valid_preacts,
+                       valid_labels=sample_valid_labels,
+                       test_preacts=test_preacts,
+                       calibname_to_calibfactory=calibname_to_calibfactory,
+                       samplesize=samplesize,
+                       samplesizesseen=samplesizesseen,
+                       metric_to_samplesize_to_calibname_to_unshiftedvals=
+                        metric_to_samplesize_to_calibname_to_unshiftedvals))
 
                 if (shifttype=='dirichlet'):
                     altered_class_priors = rng.dirichlet([
                         alpha for x in range(10)])
                 elif (shifttype=='tweakone'):
-                    altered_class_priors = np.full((10), (1-alpha)/9)
+                    altered_class_priors = np.full((10), (1.0-alpha)/9)
                     altered_class_priors[3] = alpha
                 else:
                     raise RuntimeError("Unsupported shift type",shifttype)
@@ -158,8 +172,6 @@ def run_experiments(num_trials, seeds, alphas_and_samplesize,
                 alpha_to_samplesize_to_baselineacc[alpha][samplesize].append(
                       shifted_test_baseline_accuracy)
 
-                ideal_shift_weights = (np.mean(shifted_test_labels,axis=0)/
-                                       np.mean(sample_valid_labels,axis=0))
                 true_shifted_priors = np.mean(shifted_test_labels, axis=0)
                 for adapter_name,calib_name in adaptncalib_pairs:
                     calib_shifted_test_preds =\
