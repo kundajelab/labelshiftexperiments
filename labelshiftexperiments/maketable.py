@@ -53,8 +53,7 @@ def render_calibration_table(
                     method_names=calibnames_in_table,
                     threshold=ustat_threshold))
             metric_to_samplesize_to_bestmethods[metricname][samplesize] = (
-              [calibnames_in_table[x] for x in tied_worst_methods]
-                if len(tied_worst_methods)==1 else [])
+              [calibnames_in_table[x] for x in tied_worst_methods])
             metric_to_samplesize_to_calibname_to_ranks[
                 metricname][samplesize] = (
                  get_methodname_to_ranks(methodname_to_vals=methodname_to_vals,
@@ -143,8 +142,7 @@ def render_adaptation_table(
                                 else tied_worst_methods)
                 methodgroupname_to_alpha_to_samplesize_to_bestmethods[
                   methodgroupname][alpha][samplesize] = (
-                    [methodgroups[methodgroupname][x] for x in best_methods]
-                      if (len(best_methods)==1) else [])
+                    [methodgroups[methodgroupname][x] for x in best_methods])
                 methodgroupname_to_alpha_to_samplesize_to_toprankedmethod[
                     methodgroupname][alpha][samplesize] = (
                         toprankedmethod if applyunderline else None) 
