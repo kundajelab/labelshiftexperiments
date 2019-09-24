@@ -2,7 +2,7 @@ import numpy as np
 from collections import defaultdict
 from abstention.figure_making_utils import (
     wilcox_srs, get_ustats_mat,
-    get_tied_top_and_worst_methods)
+    get_top_method_indices)
 
 def get_methodname_to_ranks(methodname_to_vals, methodnames, sortsign):
     methodname_to_ranks = defaultdict(list)
@@ -47,13 +47,14 @@ def render_calibration_table(
             ustats_mat = get_ustats_mat(
                           method_to_perfs=methodname_to_vals,
                           method_names=calibnames_in_table)
-            tied_top_methods, tied_worst_methods = (
-                get_tied_top_and_worst_methods(
+            tied_top_methods = (
+                get_top_method_indices(
+                    sorting_metric_vals=[x[1] for x in methodname_and_avgvals],
                     ustats_mat=ustats_mat,
-                    method_names=calibnames_in_table,
-                    threshold=ustat_threshold))
+                    threshold=ustat_threshold,
+                    largerisbetter=False))
             metric_to_samplesize_to_bestmethods[metricname][samplesize] = (
-              [calibnames_in_table[x] for x in tied_worst_methods])
+              [calibnames_in_table[x] for x in tied_top_methods])
             metric_to_samplesize_to_calibname_to_ranks[
                 metricname][samplesize] = (
                  get_methodname_to_ranks(methodname_to_vals=methodname_to_vals,
@@ -132,17 +133,16 @@ def render_adaptation_table(
                 ustats_mat = get_ustats_mat(
                                 method_to_perfs=methodname_to_vals,
                                 method_names=methodgroups[methodgroupname])
-                tied_top_methods, tied_worst_methods =(
-                    get_tied_top_and_worst_methods(
+                tied_top_methods = (
+                    get_top_method_indices(
+                        sorting_metric_vals=[x[1] for x in methodname_and_avgvals],
                         ustats_mat=ustats_mat,
-                        method_names=methodgroups[methodgroupname],
-                        threshold=ustat_threshold
-                    ))
-                best_methods = (tied_top_methods if largerisbetter
-                                else tied_worst_methods)
+                        threshold=ustat_threshold,
+                        largerisbetter=largerisbetter))
+                
                 methodgroupname_to_alpha_to_samplesize_to_bestmethods[
                   methodgroupname][alpha][samplesize] = (
-                    [methodgroups[methodgroupname][x] for x in best_methods])
+                    [methodgroups[methodgroupname][x] for x in tied_top_methods])
                 methodgroupname_to_alpha_to_samplesize_to_toprankedmethod[
                     methodgroupname][alpha][samplesize] = (
                         toprankedmethod if applyunderline else None) 
