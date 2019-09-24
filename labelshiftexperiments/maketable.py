@@ -108,7 +108,8 @@ def render_adaptation_table(
     adaptname_to_nicename, calibname_to_nicename,
     methodgroups, metric, largerisbetter,
     alphas_in_table, samplesizes_in_table, caption, label,
-    applyunderline):
+    applyunderline,
+    symbol='\\alpha'):
   
     methodgroupname_to_alpha_to_samplesize_to_bestmethods =\
         defaultdict(lambda: defaultdict(lambda: {}))
@@ -160,7 +161,7 @@ def render_adaptation_table(
   \\begin{tabular}{ c | c | """+(" | ".join([ " ".join( ["c" for samplesize in samplesizes_in_table ] ) for alpha in alphas_in_table]))+"}\n")
     toprint += ("    \\multirow{2}{*}{\\begin{tabular}{c}\\textbf{Shift} \\\\ \\textbf{Estimator} \\end{tabular}}"
                 +" & \\multirow{2}{*}{\\begin{tabular}{c}\\textbf{Calibration} \\\\ \\textbf{Method} \\end{tabular}} & "
-                +((" & ".join(["\\multicolumn{"+str(len(samplesizes_in_table))+"}{| c}{$\\alpha="+str(alpha)+"$}"
+                +((" & ".join(["\\multicolumn{"+str(len(samplesizes_in_table))+"}{| c}{$"+symbol+"="+str(alpha)+"$}"
                               for alpha in alphas_in_table]))+"\\\\ \n")
                 +"    \\cline{3-"+str(2+len(alphas_in_table)*len(samplesizes_in_table))+"}\n"
                 +"    & & "+(" & ".join([" & ".join(["$n$="+str(samplesize) for samplesize in samplesizes_in_table])
