@@ -195,16 +195,17 @@ def run_experiments(num_trials, seeds, alphas_and_samplesize,
                         tofit_initial_posterior_probs=calib_shifted_test_preds,
                         valid_posterior_probs=calib_valid_preds)
                     shift_weights = imbalance_adapter_func.multipliers
+                    unnormed_estimshiftedpriors = np.mean(
+                        sample_valid_labels, axis=0)*shift_weights
+                    estim_shifted_priors = (unnormed_estimshiftedpriors/
+                        np.sum(unnormed_estimshiftedpriors*shift_weights))
                     adapted_shifted_test_preds = imbalance_adapter_func(
                         calib_shifted_test_preds)
-                    estim_shifted_priors = np.mean(adapted_shifted_test_preds,
-                                                   axis=0)
                     adapted_shifted_test_accuracy = np.mean(
                         np.argmax(shifted_test_labels,axis=-1)==
                         np.argmax(adapted_shifted_test_preds,axis=-1))
                     delta_from_baseline = (adapted_shifted_test_accuracy
                                            -shifted_test_baseline_accuracy)
-
                     alpha_to_samplesize_to_adaptername_to_metric_to_vals[
                         alpha][samplesize][adapter_name+":"+calib_name][
                         'jsdiv'].append(
