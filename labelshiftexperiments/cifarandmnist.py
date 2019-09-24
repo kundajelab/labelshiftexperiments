@@ -143,6 +143,15 @@ def run_experiments(num_trials, seeds, alphas_and_samplesize,
                        samplesizesseen=samplesizesseen,
                        metric_to_samplesize_to_calibname_to_unshiftedvals=
                         metric_to_samplesize_to_calibname_to_unshiftedvals))
+                
+                #note the calibration method that did the best according to
+                #each metric, and save it
+                for metricname in metric_to_samplesize_to_calibname_to_unshiftedvals:
+                    calibname_to_unshiftedvals = metric_to_samplesize_to_calibname_to_unshiftedvals[metricname][samplesize]
+                    best_calibname = min(list(calibname_to_unshiftedvals.keys()),
+                                         key=lambda x: calibname_to_unshiftedvals[x][-1])
+                    calibname_to_calibfunc['best-'+metricname] = calibname_to_calibfunc[best_calibname]
+                    calibname_to_calibvalidpreds['best-'+metricname] = calibname_to_calibvalidpreds[best_calibname] 
 
                 if (shifttype=='dirichlet'):
                     altered_class_priors = rng.dirichlet([
