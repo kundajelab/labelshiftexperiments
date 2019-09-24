@@ -40,7 +40,7 @@ def render_calibration_table(
               metric_to_samplesize_to_calibname_to_unshiftedvals[metricname][samplesize]
             methodname_and_avgvals = [
                 (methodname, np.mean(methodname_to_vals[methodname]))
-                 for methodname in methodname_to_vals]
+                 for methodname in calibnames_in_table]
             toprankedmethod = (
                 min(methodname_and_avgvals, key=lambda x: x[1])[0]
                 if applyunderline else None)
@@ -127,7 +127,7 @@ def render_adaptation_table(
                      for methodname in methodgroups[methodgroupname]])
                 methodname_and_avgvals = [
                   (methodname, np.mean(methodname_to_vals[methodname]))
-                   for methodname in methodname_to_vals]
+                   for methodname in methodgroups[methodgroupname]]
                 toprankedmethod = min(methodname_and_avgvals,
                     key=lambda x: (-1 if largerisbetter else 1)*x[1])[0]
                 ustats_mat = get_ustats_mat(
