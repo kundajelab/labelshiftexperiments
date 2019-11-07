@@ -27,7 +27,8 @@ def render_calibration_table(
     ustat_threshold, metrics_in_table,
     samplesizes_in_table, calibnames_in_table,
     metricname_to_nicename, calibname_to_nicename, caption, label,
-    applyunderline):
+    applyunderline,
+    decimals=3):
 
     metric_to_samplesize_to_calibname_to_ranks = defaultdict(
         lambda: defaultdict(lambda: defaultdict(list)))
@@ -79,13 +80,13 @@ def render_calibration_table(
     calibname_to_nicename[calibname]+" & "+(" & ".join([
            ("\\textbf{" if calibname in metric_to_samplesize_to_bestmethods[metricname][samplesize] else "")
            +("\\underline{" if calibname==metric_to_samplesize_to_toprankedmethod[metricname][samplesize] else "")
-           +str(np.round(np.mean(metric_to_samplesize_to_calibname_to_unshiftedvals[metricname][samplesize][calibname]), decimals=3))
+           +str(np.round(np.mean(metric_to_samplesize_to_calibname_to_unshiftedvals[metricname][samplesize][calibname]), decimals=decimals))
            #+" +/- "
-           #+str(np.round(stderr(metric_to_samplesize_to_calibname_to_unshiftedvals[metricname][samplesize][calibname]), decimals=3))
+           #+str(np.round(stderr(metric_to_samplesize_to_calibname_to_unshiftedvals[metricname][samplesize][calibname]), decimals=decimals))
            +"; "
-           +str(np.round(np.mean(metric_to_samplesize_to_calibname_to_ranks[metricname][samplesize][calibname]), decimals=3))
+           +str(np.round(np.mean(metric_to_samplesize_to_calibname_to_ranks[metricname][samplesize][calibname]), decimals=decimals))
            #+" +/-"
-           #+str(np.round(stderr(metric_to_samplesize_to_calibname_to_ranks[metricname][samplesize][calibname]), decimals=3))
+           #+str(np.round(stderr(metric_to_samplesize_to_calibname_to_ranks[metricname][samplesize][calibname]), decimals=decimals))
            +("}" if calibname==metric_to_samplesize_to_toprankedmethod[metricname][samplesize] else "")
            +("}" if calibname in metric_to_samplesize_to_bestmethods[metricname][samplesize] else "")
            for metricname in metrics_in_table for samplesize in samplesizes_in_table
@@ -109,7 +110,8 @@ def render_adaptation_table(
     methodgroups, metric, largerisbetter,
     alphas_in_table, samplesizes_in_table, caption, label,
     applyunderline,
-    symbol='\\alpha'):
+    symbol='\\alpha',
+    decimals=3):
   
     methodgroupname_to_alpha_to_samplesize_to_bestmethods =\
         defaultdict(lambda: defaultdict(lambda: {}))
@@ -180,13 +182,13 @@ def render_adaptation_table(
             toprint += " & ".join([
                ("\\textbf{" if adaptncalib in methodgroupname_to_alpha_to_samplesize_to_bestmethods[methodgroupname][alpha][samplesize] else "")
                +("\\underline{" if adaptncalib==methodgroupname_to_alpha_to_samplesize_to_toprankedmethod[methodgroupname][alpha][samplesize] else "")
-               +str(np.round(valmultiplier*np.mean(alpha_to_samplesize_to_adaptncalib_to_metric_to_vals[alpha][samplesize][adaptncalib][metric]), decimals=3))
+               +str(np.round(valmultiplier*np.mean(alpha_to_samplesize_to_adaptncalib_to_metric_to_vals[alpha][samplesize][adaptncalib][metric]), decimals=decimals))
                #+" +/- "
-               #+str(np.round(stderr(alpha_to_samplesize_to_adaptncalib_to_metric_to_vals[alpha][samplesize][adaptncalib][metric]), decimals=3))
+               #+str(np.round(stderr(alpha_to_samplesize_to_adaptncalib_to_metric_to_vals[alpha][samplesize][adaptncalib][metric]), decimals=decimals))
                +"; "
-               +str(np.round(np.mean(methodgroupname_to_alpha_to_samplesize_to_methodname_to_ranks[methodgroupname][alpha][samplesize][adaptncalib]), decimals=3))
+               +str(np.round(np.mean(methodgroupname_to_alpha_to_samplesize_to_methodname_to_ranks[methodgroupname][alpha][samplesize][adaptncalib]), decimals=decimals))
                #+" +/-"
-               #+str(np.round(stderr(methodgroupname_to_alpha_to_samplesize_to_methodname_to_ranks[methodgroupname][alpha][samplesize][adaptncalib]), decimals=3))
+               #+str(np.round(stderr(methodgroupname_to_alpha_to_samplesize_to_methodname_to_ranks[methodgroupname][alpha][samplesize][adaptncalib]), decimals=decimals))
                +("}" if adaptncalib==methodgroupname_to_alpha_to_samplesize_to_toprankedmethod[methodgroupname][alpha][samplesize] else "")
                +("}" if adaptncalib in methodgroupname_to_alpha_to_samplesize_to_bestmethods[methodgroupname][alpha][samplesize] else "")
                for alpha in alphas_in_table for samplesize in samplesizes_in_table ])
