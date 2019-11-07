@@ -182,6 +182,8 @@ def run_experiments(num_trials, seeds, alphas_and_samplesize,
                 alpha_to_samplesize_to_baselineacc[alpha][samplesize].append(
                       shifted_test_baseline_accuracy)
 
+                ideal_shift_weights = (np.mean(shifted_test_labels,axis=0)/
+                                       np.mean(sample_valid_labels,axis=0))
                 true_shifted_priors = np.mean(shifted_test_labels, axis=0)
                 for adapter_name,calib_name in adaptncalib_pairs:
                     calib_shifted_test_preds =\
@@ -208,6 +210,10 @@ def run_experiments(num_trials, seeds, alphas_and_samplesize,
                                            -shifted_test_baseline_accuracy)
                     alpha_to_samplesize_to_adaptername_to_metric_to_vals[
                         alpha][samplesize][adapter_name+":"+calib_name][
+                        'mseweights'].append(np.mean(np.square(
+                                ideal_shift_weights-shift_weights)))
+                    alpha_to_samplesize_to_adaptername_to_metric_to_vals[
+                        alpha][samplesize][adapter_name+":"+calib_name][
                         'jsdiv'].append(
                           scipy.spatial.distance.jensenshannon(
                               p=true_shifted_priors, q=estim_shifted_priors))
@@ -226,7 +232,7 @@ def run_experiments(num_trials, seeds, alphas_and_samplesize,
             samplesizesseen.add(samplesize)
         
         print("On alpha",alpha,"sample size", samplesize)
-        for metric_name in ['delta_acc', 'jsdiv']:
+        for metric_name in ['delta_acc', 'jsdiv', 'mse']:
             print("Metric",metric_name)
             for adapter_name,calib_name in adaptncalib_pairs:
                 adaptncalib_name = adapter_name+":"+calib_name
