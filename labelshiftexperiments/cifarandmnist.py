@@ -232,7 +232,7 @@ def run_experiments(num_trials, seeds, alphas_and_samplesize,
             samplesizesseen.add(samplesize)
         
         print("On alpha",alpha,"sample size", samplesize)
-        for metric_name in ['delta_acc', 'jsdiv', 'mse']:
+        for metric_name in ['delta_acc', 'jsdiv', 'mseweights']:
             print("Metric",metric_name)
             for adapter_name,calib_name in adaptncalib_pairs:
                 adaptncalib_name = adapter_name+":"+calib_name
