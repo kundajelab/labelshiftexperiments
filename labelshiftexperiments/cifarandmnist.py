@@ -208,10 +208,19 @@ def run_experiments(num_trials, seeds, alphas_and_samplesize,
                         np.argmax(adapted_shifted_test_preds,axis=-1))
                     delta_from_baseline = (adapted_shifted_test_accuracy
                                            -shifted_test_baseline_accuracy)
+                    #expected value of mse weights; weighted by the class
+                    # proportions in the test set
                     alpha_to_samplesize_to_adaptername_to_metric_to_vals[
                         alpha][samplesize][adapter_name+":"+calib_name][
-                        'mseweights'].append(np.mean(np.square(
-                                ideal_shift_weights-shift_weights)))
+                        'mseweights_testsetprop'].append(
+                          np.sum(true_shifted_priors*(
+                           np.square(ideal_shift_weights-shift_weights))))
+                    #mse weights but each class weighted evenly
+                    alpha_to_samplesize_to_adaptername_to_metric_to_vals[
+                        alpha][samplesize][adapter_name+":"+calib_name][
+                        'mseweights_even'].append(
+                          np.mean(np.square(
+                           ideal_shift_weights-shift_weights)))
                     alpha_to_samplesize_to_adaptername_to_metric_to_vals[
                         alpha][samplesize][adapter_name+":"+calib_name][
                         'jsdiv'].append(
@@ -232,7 +241,9 @@ def run_experiments(num_trials, seeds, alphas_and_samplesize,
             samplesizesseen.add(samplesize)
         
         print("On alpha",alpha,"sample size", samplesize)
-        for metric_name in ['delta_acc', 'jsdiv', 'mseweights']:
+        for metric_name in ['delta_acc', 'jsdiv',
+                            'mseweights_testsetprop',
+                            'mseweights_even']:
             print("Metric",metric_name)
             for adapter_name,calib_name in adaptncalib_pairs:
                 adaptncalib_name = adapter_name+":"+calib_name
