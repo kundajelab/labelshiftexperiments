@@ -250,7 +250,7 @@ def run_experiments(num_trials, seeds, alphas_and_samplesize,
                 n = len(alpha_to_samplesize_to_adaptername_to_metric_to_vals[
                       alpha][samplesize][adaptncalib_name][metric_name])
                 
-                print(adaptncalib_name, np.mean(
+                print(adaptncalib_name, np.median(
                  alpha_to_samplesize_to_adaptername_to_metric_to_vals[
                    alpha][samplesize][adaptncalib_name][metric_name]), "+/-",
                  (1.0/np.sqrt(n))*np.std(

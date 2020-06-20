@@ -80,11 +80,11 @@ def render_calibration_table(
     calibname_to_nicename[calibname]+" & "+(" & ".join([
            ("\\textbf{" if calibname in metric_to_samplesize_to_bestmethods[metricname][samplesize] else "")
            +("\\underline{" if calibname==metric_to_samplesize_to_toprankedmethod[metricname][samplesize] else "")
-           +str(np.round(np.mean(metric_to_samplesize_to_calibname_to_unshiftedvals[metricname][samplesize][calibname]), decimals=decimals))
+           +str(np.round(np.median(metric_to_samplesize_to_calibname_to_unshiftedvals[metricname][samplesize][calibname]), decimals=decimals))
            #+" +/- "
            #+str(np.round(stderr(metric_to_samplesize_to_calibname_to_unshiftedvals[metricname][samplesize][calibname]), decimals=decimals))
            +"; "
-           +str(np.round(np.mean(metric_to_samplesize_to_calibname_to_ranks[metricname][samplesize][calibname]), decimals=decimals))
+           +str(np.round(np.median(metric_to_samplesize_to_calibname_to_ranks[metricname][samplesize][calibname]), decimals=decimals))
            #+" +/-"
            #+str(np.round(stderr(metric_to_samplesize_to_calibname_to_ranks[metricname][samplesize][calibname]), decimals=decimals))
            +("}" if calibname==metric_to_samplesize_to_toprankedmethod[metricname][samplesize] else "")
@@ -182,11 +182,11 @@ def render_adaptation_table(
             toprint += " & ".join([
                ("\\textbf{" if adaptncalib in methodgroupname_to_alpha_to_samplesize_to_bestmethods[methodgroupname][alpha][samplesize] else "")
                +("\\underline{" if adaptncalib==methodgroupname_to_alpha_to_samplesize_to_toprankedmethod[methodgroupname][alpha][samplesize] else "")
-               +str(np.round(valmultiplier*np.mean(alpha_to_samplesize_to_adaptncalib_to_metric_to_vals[alpha][samplesize][adaptncalib][metric]), decimals=decimals))
+               +str(np.round(valmultiplier*np.median(alpha_to_samplesize_to_adaptncalib_to_metric_to_vals[alpha][samplesize][adaptncalib][metric]), decimals=decimals))
                #+" +/- "
                #+str(np.round(stderr(alpha_to_samplesize_to_adaptncalib_to_metric_to_vals[alpha][samplesize][adaptncalib][metric]), decimals=decimals))
                +"; "
-               +str(np.round(np.mean(methodgroupname_to_alpha_to_samplesize_to_methodname_to_ranks[methodgroupname][alpha][samplesize][adaptncalib]), decimals=decimals))
+               +str(np.round(np.median(methodgroupname_to_alpha_to_samplesize_to_methodname_to_ranks[methodgroupname][alpha][samplesize][adaptncalib]), decimals=decimals))
                #+" +/-"
                #+str(np.round(stderr(methodgroupname_to_alpha_to_samplesize_to_methodname_to_ranks[methodgroupname][alpha][samplesize][adaptncalib]), decimals=decimals))
                +("}" if adaptncalib==methodgroupname_to_alpha_to_samplesize_to_toprankedmethod[methodgroupname][alpha][samplesize] else "")
