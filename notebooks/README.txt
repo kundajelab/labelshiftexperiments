@@ -1,1 +1,1 @@
-The notebooks in this folder replicate the results starting from saved model predictions that were uploaded to zenodo. See the code under the folder obtaining_predictions for how the models/predictions were obtained.
+The notebooks in this folder replicate the results starting from saved model predictions that were uploaded to zenodo. See the code under the folder obtaining_predictions for how the models/predictions were obtained. The .json.gz files save the results of the label shift adaptation for ease of regenerating the final tables.
