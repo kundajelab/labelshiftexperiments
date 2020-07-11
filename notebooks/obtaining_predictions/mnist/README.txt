@@ -1,2 +1,2 @@
 Kundajelab internal notes:
-- Amr trained these models.
+- Amr Alexandari trained these models.
