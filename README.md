@@ -6,4 +6,4 @@ Authors: Amr Alexandari\*, Anshul Kundaje† and Avanti Shrikumar\*†
 
 Core calibration and label shift adaptation code lives in https://github.com/blindauth/abstention
 
-See the notebooks/ folder for code to replicate tables in the paper
+See the notebooks/ folder for code to replicate tables in the paper, and post a github issue if you have questions!
